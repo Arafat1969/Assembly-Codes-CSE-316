@@ -1,0 +1,72 @@
+.MODEL SMALL 
+.STACK 100H
+.DATA
+ARR DW 90,90,70,60,50,40,30,20,20,10
+MSG1 DB 0AH,0DH,'Ascending$'
+MSG2 DB 0AH,0DH,'Descending$'
+MSG3 DB 0AH,0DH,'Not sorted$'
+N DW 10
+A DW ?
+
+
+.CODE
+MAIN PROC 
+    MOV AX,@DATA
+    MOV DS,AX
+    
+    LEA SI,ARR
+    MOV CX,N  
+    MOV BX,[SI]
+FIRST_LOOP:
+    MOV AX,[SI]
+    ADD SI,2
+    DEC CX
+    
+    CMP AX,BX
+    JG ASC_LOOP
+    CMP AX,BX
+    JL DESC_LOOP
+    
+    INC CX
+    MOV BX,AX
+    LOOP FIRST_LOOP
+    
+    JMP ASC
+ASC_LOOP:
+    MOV BX,AX
+    MOV AX,[SI]
+    CMP AX,BX
+    JL NOTS
+    ADD SI,2
+    LOOP ASC_LOOP 
+    
+    JMP ASC
+DESC_LOOP: 
+    MOV BX,AX
+    MOV AX,[SI]
+    CMP AX,BX
+    JG NOTS
+    ADD SI,2
+    LOOP DESC_LOOP
+   JMP DESC
+ASC:
+    LEA DX,MSG1
+    JMP DISPLAY
+DESC:
+    LEA DX,MSG2
+    JMP DISPLAY
+NOTS:         
+    LEA DX,MSG3
+DISPLAY:
+    MOV AH,9
+    INT 21H
+EXIT:
+    MOV AH,4CH
+    INT 21H
+MAIN ENDP 
+END MAIN    
+    
+ 
+
+
+
